@@ -8,14 +8,13 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
 
-  // 🔹 Function to get the first two initials
-  const getInitials = (name) => {
-    if (!name) return "";
-    const words = name.split(" ");
+  // 🔹 Function to get the first two initials safely
+  const getInitials = (name = "") => {
+    const words = name.trim().split(/\s+/); // Handle multiple spaces
     return words
       .slice(0, 2) // Get first two words
-      .map((word) => word.charAt(0).toUpperCase()) // Take first letter and capitalize
-      .join(""); // Join letters
+      .map((word) => word.charAt(0).toUpperCase()) // Extract first letter
+      .join(""); // Combine letters
   };
 
   return (
@@ -26,7 +25,7 @@ const Navbar = () => {
           <div className="flex items-center gap-4">
             {/* 🔹 Display User Initials */}
             <span className="w-10 h-10 flex items-center justify-center bg-blue-600 text-white rounded-full font-medium text-lg">
-              {getInitials(user.name)}
+              {getInitials(user?.name)}
             </span>
 
             {/* 🔹 Logout Button */}

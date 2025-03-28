@@ -22,9 +22,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
       >
         <AuthProvider>
-          <Toaster />
-          <Navbar/>
-          {children}
+            <Toaster />
+            <Navbar />
+            {children}
         </AuthProvider>
       </body>
     </html>

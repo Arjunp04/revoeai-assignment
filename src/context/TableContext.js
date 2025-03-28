@@ -7,47 +7,55 @@ const TableContext = createContext();
 
 export const TableProvider = ({ children }) => {
   const [tableData, setTableData] = useState([]);
+  const [sheetData, setSheetData] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // Fetch all tables from API
-  const fetchTables = async () => {
-    try {
-      const response = await axios.get("/api/table");
-      console.log("fetch tables list:", response);
-      setTableData(
-        Array.isArray(response.data.tables) ? response.data.tables : []
-      ); // ✅ Ensure it's an array
-    } catch (error) {
-      console.error("Error fetching tables:", error);
-      setTableData([]); // ✅ Handle error by setting an empty array
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Fetch Google Sheet data
   const fetchGoogleSheetData = async () => {
+    setLoading(true);
     try {
       const response = await axios.get("/api/google-sheet");
-      console.log(response);
-      setTableData(
-        Array.isArray(response.data.sheetsData) ? response.data.sheetsData : []
-      ); // ✅ Ensure it's an array
+      console.log("Google Sheets Data fetched:", response.data.sheetsData);
+      setSheetData(response.data.sheetsData);
     } catch (error) {
       console.error("Error fetching Google Sheet data:", error);
-      setTableData([]); // ✅ Handle error
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
-  // Create a new table
+  useEffect(() => {
+    fetchGoogleSheetData();
+  }, []);
+
+  // Fetch all tables from API
+  const fetchTables = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("/api/table");
+      console.log("Tables fetched:", response.data.tables);
+      setTableData(
+        Array.isArray(response.data.tables) ? response.data.tables : []
+      );
+    } catch (error) {
+      console.error("Error fetching tables:", error);
+      setTableData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Create a new table (WITHOUT fetching Google Sheets data)
   const createTable = async (newTable) => {
     try {
-      console.log(newTable);
+      // Step 1: Create a new table
       const response = await axios.post("/api/table", newTable);
-      console.log("create table response:", response);
-      setTableData((prevTables) => [...prevTables, response.data.table]);
+      const createdTable = response.data.table;
+      console.log("New table created:", createdTable);
+
+      // Step 2: Refresh the table list
+      fetchTables();
     } catch (error) {
       console.error("Error creating table:", error);
     }
@@ -57,12 +65,17 @@ export const TableProvider = ({ children }) => {
     fetchTables();
   }, []);
 
-  useEffect(() => {
-    fetchGoogleSheetData();
-  }, []);
-
   return (
-    <TableContext.Provider value={{ tableData, loading, setLoading, createTable }}>
+    <TableContext.Provider
+      value={{
+        tableData,
+        loading,
+        setLoading,
+        setSheetData,
+        sheetData,
+        createTable,
+      }}
+    >
       {children}
     </TableContext.Provider>
   );

@@ -39,15 +39,4 @@ export async function GET() {
   }
 }
 
-// // 🔹 Get Table by ID
-// export async function GET(req, { params }) {
-//   await connectDB();
-//   try {
-//     const table = await Table.findById(params.id);
-//     if (!table) return NextResponse.json({ error: "Table not found" }, { status: 404 });
 
-//     return NextResponse.json({data: table }, { status: 200 });
-//   } catch (error) {
-//     return NextResponse.json({ error: "Failed to fetch table" }, { status: 500 });
-//   }
-// }

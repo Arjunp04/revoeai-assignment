@@ -15,11 +15,7 @@ const ProtectedDashboardLayout = ({ children }) => {
   }, [user, loading, router]);
 
   // 🔹 Only return children if user exists
-    return user ? <>{children}</> : (
-      <p className="flex justify-center items-center  mt-40 text-white text-lg">
-        Loading...
-      </p>
-  ) ;
+    return user ? <>{children}</> : null ;
 };
 
 export default ProtectedDashboardLayout;
